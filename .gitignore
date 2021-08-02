@@ -8,10 +8,6 @@
 
 .DS_Store
 db.sqlite3
-acceso/static/
-contestservice/static/
-static/
-statics/
 vsvenv/
 vsvenv/*
 videoshare.sock
