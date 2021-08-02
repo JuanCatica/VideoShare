@@ -1,0 +1,16 @@
+{% extends 'acceso/base_acceso.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block mainimage %}{% load static %}{% static 'core/imgs/register.jpg' %}{% endblock %}
+
+{% block maincontent %}  
+<!-- Cabecera -->
+    {% if registered %}
+        <h1>¡ Genial ! </h1>
+        <span class="subheading">Te damos una grata bienvenida a VideoShare</span>
+    {% else %}
+        <h1>Lo sentimos :(</h1>
+        <span class="subheading">¡ Algo malo ha sucedido !</span>
+    {% endif %}
+{% endblock  %}

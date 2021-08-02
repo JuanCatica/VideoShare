@@ -1,0 +1,175 @@
+<!--Modal para la actualización/adición de un Concurso
+    Aspetos importantes:
+        Para identificar de manera unica cada uno de los modales incluidos dentro de la viualización
+        de cada concurso, se crea cada componente <div> (modal) con un 'id' único, concatenando el nombre
+        del tipo de modal que se desea visualizar (en este caso edit / view / delete) y el identificador 
+        único del concurso, siendo el mismo valor de la llave primaria. 
+-->
+<div class="modal fade " id="editModal-{{contest.id}}" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModal">{{contest.name_contest}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <textarea class="form-control" rows="4" cols="50" style= "background-color: white" readonly>{{contest.description}}</textarea>
+                </div>
+                <div class="input-group mb-1">
+                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">URL</span></div>
+                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.url}}</a>
+                </div>
+                <div class="input-group mb-1">
+                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
+                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.start_date}}</a>
+                </div>
+                <div class="input-group mb-1">
+                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
+                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.end_date}}</a>
+                </div>
+                <div class="input-group mb-1">
+                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Creación</span></div>
+                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.created}}</a>
+                </div>
+                {% if count > 0%}
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#statsModal-{{contest.id}}" data-whatever="@getbootstrap">Métricas</button>
+                    </div>
+                {% endif %}
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger" data-toggle="modal" data-dismiss="modal" data-target="#deleteModal-{{contest.id}}" data-whatever="@getbootstrap">Borrar</button>
+                    <form method="post" action="{% url 'update_contest' %}">{% csrf_token %}
+                        <input type="hidden" name="id_contest" value="{{contest.id}}">
+                        <button type="submit" class="btn btn-primary">Editar</button>
+                    </form>
+
+                    <form action="{% url 'contest_home' contest.url %}" target="_blank">
+                        <button type="submit" class="btn btn-success">Ver Videos</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal para la confirmar eliminación de un concurso -->
+<div class="modal fade" id="deleteModal-{{contest.id}}" tabindex="1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal">Eliminar </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <label type="text"  aria-label="Default"  aria-describedby="inputGroup-sizing-default">Deseas eliminar el Concurso '{{contest.name_contest}}' ?</label>
+
+                <div class="modal-footer">
+                    <form method="post" action="{% url 'delete_contest' %}">{% csrf_token %}
+                        <input type="hidden" name="id_contest" value="{{contest.id}}">
+                        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Borrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal para la visualización de estadisticos de cada consurso -->
+<div class="modal fade " id="statsModal-{{contest.id}}" tabindex="1" role="dialog" aria-labelledby="statsModal" aria-hidden="true">
+    <div class="modal-dialog mw-100 w-75" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="statsModal">Estadisticas | {{contest.name_contest}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="myChart-{{contest.id}}" class="chart--container"></div>
+                <div class="modal-footer">
+                    <form action="{% url 'contest_home' contest.url %}" target="_blank">
+                        <button type="submit" class="btn btn-success">Ver Videos</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"];
+    zingchart.render({
+        id: 'myChart-{{contest.id}}',
+        data: {
+            type: 'pie',
+            backgroundColor: '#2A2C3E',
+            title: {
+                text: 'Videos',
+                backgroundColor: '#FE9C8A',
+                fontColor: '#1A1B26',
+                fontSize: '16px',
+                height: '40px'
+            },
+            subtitle: {
+                backgroundColor: '#202235',
+                height: '35px',
+                y: '40px'
+            },
+            legend: {
+                backgroundColor: 'none',
+                borderWidth: '0px',
+                item: {
+                    fontColor: 'white'
+                },
+                layout: 'h',
+                marker: {
+                    type: 'circle',
+                    borderColor: 'white'
+                },
+                shadow: false,
+                toggleAction: 'remove',
+                x: '32.5%',
+                y: '40px'
+            },
+            plot: {
+                valueBox: [{
+                        text: '%t: %v',
+                        fontSize: '16px',
+                        placement: 'out'
+                    },
+                    {
+                        text: '%npv%',
+                        fontColor: '#1A1B26',
+                        fontSize: '16px',
+                        placement: 'in'
+                    }
+                ],
+                refAngle: 270
+            },
+            plotarea: {
+                margin: '90 30 25 30'
+            },
+            tooltip: {
+                borderColor: '#fff',
+                borderRadius: '3px',
+                borderWidth: '1px',
+                fontColor: '#1A1B26',
+                fontSize: '12px',
+                shadow: false
+            },
+            series: {{stat|safe}}
+        }
+    });
+</script>

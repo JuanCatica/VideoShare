@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lan="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        {% load static %}
+        <title>{% block title %}{% endblock %}</title>
+
+        <!-- Estilos y fuentes del template  -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js" type="text/javascript"></script>
+        
+        <!-- Estilos Secundarios -->
+        <link href="{% static 'core/css/clean-blog.min.css'%}" rel="stylesheet">
+        <link href="{% static 'core/vendor/font-awesome/css/font-awesome.min.css'%}" rel="stylesheet" type="text/css"> 
+        <script src="{% static 'core/js/bootstrap-datetimepicker.min.js'%}"></script>
+        <link rel="stylesheet" href="{% static 'core/css/bootstrap-datetimepicker.min.css'%}">
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'> 
+        <!--<link href="{% static 'core/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">-->
+
+    </head>
+    <body>
+        <!-- Navegación -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light"><!--bar navbar-expand-sm bg-light-->
+            <div class="container">
+                <a class="navbar-brand" href="{% url "info" %}">VideoShare</a>
+                <div>
+                    <ul class="nav">
+                        {% if username%}
+                            <li class="nav-item">
+                                <form method="get" action="{% url "home" %}">
+                                    <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
+                                        <small>{{username}}</small>
+                                        <img src="{% static 'core/icons/user.png' %}"  height="25"/>
+                                    </button>
+                                </form>
+                            </li> 
+                        {% endif %}
+                            {% if contest %}
+                                <li class="nav-item">
+                                    <form method="get" action="{% url "contest_home" contest.url %}">
+                                        <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
+                                            <small>{% block contestname %}{% endblock %}</small>
+                                            <img src="{% static 'core/icons/videos-contest.png' %}"  height="25"/>
+                                        </button>
+                                    </form>
+                                </li>
+                                <li class="nav-item">
+                                    <button type="submit" data-toggle="modal" data-placement="bottom" title="Añadir un Video"  style="background-color:transparent; border-color:transparent;"
+                                        data-dismiss="modal" data-target="#newVideoModal" data-whatever="@getbootstrap"> 
+                                            <small>+Video</small>
+                                            <img src="{% static 'core/icons/new-video.png' %}"  height="35"/>
+                                        </button>
+                                </li>
+                            {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% include 'contestservice/includes/popup_video.html' %}
+
+        <!-- Contenido Dinámico -->
+        {% block content %}{% endblock %}
+
+        <!-- Bootstrap y Javascripts 
+        <script src="{% static 'core/vendor/jquery/jquery.min.js'%}"></script>
+        <script src="{% static 'core/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+        <script src="{% static 'core/js/clean-blog.min.js'%}"></script>-->
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+        </script>
+        <!-- Pié de página -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <p class="copyright text-muted">· For more information go to <a href="https://github.com/JuanCatica/VideoShare" target="_blank">this repo</a> ·</p>
+                        <p class="copyright text-muted"> · VideoShare :D · </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

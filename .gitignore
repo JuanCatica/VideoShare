@@ -1,0 +1,22 @@
+# Directorios y archivos a ignorar durante la carga al repositorio
+
+# ---------------------
+# [Proyecto] VideoShare
+
+# Se incluyen unicamente los estaticos de la app core
+#core/static/
+
+.DS_Store
+db.sqlite3
+acceso/static/
+contestservice/static/
+static/
+statics/
+vsvenv/
+vsvenv/*
+videoshare.sock
+
+.env
+.venv
+__pycache__/
+.ipynb_checkpoints

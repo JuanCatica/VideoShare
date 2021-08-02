@@ -1,0 +1,49 @@
+<!--Modal para la carga de un nuevo video-->
+<div class="modal fade" id="newVideoModal" tabindex="1" role="dialog" aria-labelledby="newVideoModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" >Nuevo Video</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form method="post" action="{% if contest %}{% url 'register_video' contest.url %}{% endif %}" enctype="multipart/form-data">{% csrf_token %}
+
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        {{ video_form.title }}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        {{ video_form.first_name_competitor }}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        {{ video_form.last_name_competitor }}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        {{ video_form.email_competitor }}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        {{ video_form.description }}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Video</span>
+                        <input id="videofile" type="file" class="form-control" name="videofile" placeholder='Imagen' >
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="Submit" class="btn btn-success">Registrar Video</button> 
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

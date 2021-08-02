@@ -1,0 +1,34 @@
+{% extends 'acceso/base_acceso.html' %}
+
+{% block title %}Info{% endblock %}
+
+{% block mainimage %}{% load static %}{% static 'core/imgs/register.jpg' %}{% endblock %}
+
+{% block maincontent %}  
+
+    <h1>VideoShare</h1>
+    <span class="subheading">Open Source Project</span>
+
+{% endblock  %}
+
+{% block secondarycontent %}
+    <span class="subheading">¡Hola! Si deseas saber más de nuestro proyecto, puedes ir a al siguiente <a href="https://github.com/JuanCatica/VideoShare" target="_blank"> repositorio</a> .</span> 
+{% endblock %}
+
+{% block how2use %}
+    <header class="masthead" style="background-image: url('{% load static %}{% static 'core/imgs/new_contest.jpg' %}')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-8 col-8 mx-auto">      
+                    <div class="site-heading">
+                        <!-- Contenido Dinámico -->
+                        <h2>¿Cómo iniciar?</h2>
+                        <span class="subheading">Lo primero que debes hacer es registrarte en nuestra página, una vez hecho, debes ingresar y crear el concurso que quieras ¡es muy fácil! Sólo te queda compartir la URL con tus amigos, compañeros o clientes y podrán tener acceso al concurso para subir sus videos. Una vez los videos estén convertidos, les llegará una notificación al correo inscrito con una URL donde podrán acceder directamente al vídeo que subieron ¡y listo! </span> 
+                        <span class="subheading">Esperamos que disfrutes de esta grandiosa experiencia y te agradecemos por utilizar nuestro servicio.</span> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}

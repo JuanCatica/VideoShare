@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block username %}{{ username | capfirst }}{% endblock %}
+
+{% block content %}  
+
+<!-- Lista de todos los concursos -->
+
+    {% if contests_stats %}
+        <!-- concurso -->
+        {% for contest, count, stat in contests_stats %}
+            <div class="container">
+                <div class="row "> 	
+                    <div class="col-12 col-md-12">
+                        <div class="input-group">
+                            <a class="input-group-text bg-info text-white section-heading col-12" data-toggle="modal" data-target="#editModal-{{contest.id}}" data-whatever="@getbootstrap">{{contest.name_contest}}</a>               
+                        </div>
+                        <div class="row ">
+                            {% if contest.image %}
+                                <img class="img-fluid col-5" src="{{contest.image.url}}" alt="" data-toggle="modal" data-target="#editModal-{{contest.id}}" data-whatever="@getbootstrap">
+                            {% else %}
+                                <img class="img-fluid col-5" src="{% load static %}{% static 'core/imgs/default.jpg' %}" alt="" data-toggle="modal" data-target="#editModal-{{contest.id}}" data-whatever="@getbootstrap">
+                            {% endif %}
+                            
+                            <div class="modal-body">
+                                <div class="input-group mb-1">
+                                    {{contest.description|truncatechars:200}}
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">URL</span></div>
+                                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.url}}</a>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
+                                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.start_date}}</a>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
+                                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.end_date}}</a>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Creación</span></div>
+                                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{contest.created}}</a>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Videos</span></div>
+                                    <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{count}}</a>
+                                </div>   
+                            </div>
+                            
+                            {% include 'core/includes/popup_contest.html' %}
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        <!--<hr size="3">-->
+        {% endfor %}
+    {% else %}
+        <!-- Cabecera -->
+        <header class="masthead" style="background-image: url('{% load static %}{% static 'core/imgs/default.jpg' %}')">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <div class="site-heading">
+                            <h3 class="text-primary">No tienes concursos :|</h3>
+                            <span class="subheading text-secondary">Crea algunos concursos y los veras aquí !</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Boton Para inicar una nueva Receta -->
+        <div class="row justify-content-center">
+            <form action="{% url "create_contest" %}">
+                <button type="submit" class="btn btn-outline-primary" >Nuevo Concurso</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock  %}

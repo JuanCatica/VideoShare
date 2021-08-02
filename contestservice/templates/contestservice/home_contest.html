@@ -1,0 +1,169 @@
+{% extends 'contestservice/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block contestname %}{{ contest.name_contest | capfirst }}{% endblock %}
+
+{% block content %}  
+
+<!-- Lista de todos los concursos -->
+    {% if videos %}
+        <!-- concurso -->
+        <div class="row">
+            <div class="col-8 ">
+                <header class="masthead-fluid bg-dark p-3">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12" align="center">
+                                <b><p class="text-white">{{video_selected.title}}</p></b>
+                            </div>
+                            <div class="container col-12 p-1">
+                                <video class="container" widht='100%' controls>
+                                    {% if video_selected.state == "Convertido" %}
+                                        <source src="{{ video_selected.videofile_format.url }}" type='video/mp4'>
+                                    {% else %}
+                                        <source src="{{ video_selected.videofile.url }}" type='video/mp4'>
+                                    {% endif%}                                    
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 mx-auto p-1">
+                            <p class="input-group mb-1"><b>{{video_selected.title}}</b></p>
+                            <p class="input-group mb-1">
+                                {{video_selected.description}}
+                            </p>
+                            <div class="input-group mb-1">
+                                <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">URL</span></div>
+                                <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{video_selected.first_name_competitor}}</a>
+                            </div>
+                            <div class="input-group mb-1">
+                                <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">E-Mmail</span></div>
+                                <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{video_selected.email_competitor}}</a>
+                            </div>
+                            <div class="input-group mb-1">
+                                <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Estado</span></div>
+                                <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{video_selected.state|lower}}</a>
+                            </div>
+                            <div class="input-group mb-1">
+                                <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Carga</span></div>
+                                <a type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default">{{video_selected.load_date}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+   
+            </div>
+            <div class="col-4 bg-faded">
+                <div class="container">   
+                    {% for video in videos %}
+                        <div class="row ">	
+                            <div class="col-12">
+                                <div class="row p-2">
+                                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                                        <div class="itemsContainer">
+                                            <form method="get" action="{% url "contest_home" contest.url  %}">
+                                                <input type="hidden" id="" name="video_id" value="{{video.id}}"> 
+                                                <button type="submit" class="btn btn-light p-1" > 
+                                                    {% if video.image %}
+                                                        <img class="img-fluid" src="{% load static %}{{video.image.url}}">
+                                                    {% else %}
+                                                        <img class="img-fluid" src="{% load static %}{% static 'core/imgs/default.jpg' %}">
+                                                    {% endif %}
+                                                    <img class="play img-fluid" src="{% load static %}{% static 'core/icons/play-icon.png'%}"></img>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-7 col-lg-7 d-none d-lg-block">
+                                        <div class="row ">
+                                            <small><b>{{video.title}}</b></small>
+                                        </div>
+                                        <div class="row ">
+                                            <small>{{video.first_name_competitor}}</small>
+                                        </div>
+                                        <div class="row">
+                                            <small>{{video.email_competitor}}</small>
+                                        </div>
+                                        <div class="row ">
+                                            <small>video {{video.state|lower}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Cabecera -->
+        <header class="masthead" style="background-image: url('{% load static %}{% if contest.image %}{{contest.image.url}}{% else %}{% static 'core/imgs/default.jpg' %}{% endif %}')">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <div class="site-heading">
+                            <h3 class="text-primary">Por el momento no tenemos videos disponibles</h3>
+                            <b class="subheading text-white">Puede que algunos de los videos se esten procesando. Carga algún video y te notificaremos cuando este haya sido procesado :D</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    {% endif %}
+
+<style>
+.itemsContainer {
+    background:red; 
+    float:left;
+    position:relative
+}
+.itemsContainer:hover .play{display:block}
+.play{
+  position : absolute;
+  display:none;
+  top:0%; 
+  width:67%;
+  margin:0 auto; 
+  left:0px;
+  right:0px;
+  z-index:100;
+  opacity: 0.8;
+} 
+</style>
+<div class="modal fade" id="msnModal" tabindex="1" role="dialog" aria-labelledby="msnModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" >Mensaje</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="">
+                        {{ meessage }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">Entendido</button> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(window).on('load',function(){
+        {% if meessage %}
+            $('#msnModal').modal('show');
+        {% endif %}
+    });
+</script>
+{% endblock  %}

@@ -1,0 +1,48 @@
+{% extends 'acceso/base_acceso.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block mainimage %}{% load static %}{% static 'core/imgs/register.jpg' %}{% endblock %}
+
+{% block maincontent %}  
+<!-- Cabecera -->
+    {% if registered %}
+        <h1>Genial, Te has regstrado en VideoShare</h1>
+        <h2>¡ Te damos una grata bienvenida !</h2>
+    {% else %}
+        <form method="post" action="{% url 'register' %}">{% csrf_token %}
+            {# A more "HTML" way of creating the login form#}
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Username</span></div>
+                <input type="text" name="username" placeholder="Nombre de usuario único (nickname)" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">First Name</span></div>
+                <input type="text" name="first_name" placeholder="Nombres" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Last Name</span></div>
+                <input type="text" name="last_name" placeholder="Apellidos" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">E-Mail</span></div>
+                <input type="text" name="email" placeholder="organizador@mail.com" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">password</span></div>
+                <input type="password" name="password" placeholder="**********" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">confirm</span></div>
+                <input type="password" name="password_confirm" placeholder="**********" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <button type="submit" value="Register" class="btn btn-success">Register</button>  
+        </form>
+    {% endif %}
+{% endblock  %}

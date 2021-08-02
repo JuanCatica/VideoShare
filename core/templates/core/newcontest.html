@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block username %}{{ username | capfirst }}{% endblock %}
+
+{% block content %}  
+{% load static %}
+<!-- Lista de todos los concurso -->
+    <header class="masthead" style="background-image: url('{% static 'core/imgs/new_contest.jpg' %}')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-6 mx-auto">
+                    <div class="site-heading">
+                        <h3 class="text-success">Formulario de Concurso</h3>
+                        <form method="post" action="{% url 'register_contest' %}" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="input-group mb-3">
+                                {{ contest_form.name_contest }}
+                            </div>
+
+                            <div class="input-group mb-3">
+                                {{ contest_form.description }}
+                            </div>
+
+                            <div class="input-group mb-3"> 
+                                <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">Alias del Concurso</span></div>   
+                                {{ contest_form.url }}
+                            </div>
+
+                            <table style="width:100%">
+                                <tr>
+                                    <th>Fecha de Inicio</th>
+                                    <th>Fecha de Fin</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="input-group mb-3" >
+                                            <input type='text' name="start_date" class="form-control"   id='datetimepicker1'  required>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group mb-3">
+                                            <input type='text' name="end_date"  class="form-control"   id='datetimepicker2'  required>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Imagen (Opcional)</span>
+                                <input id="image" type="file" class="form-control" name="image" placeholder='Imagen' >
+                            </div>
+
+                            <button type="submit" value="Submit" class="btn btn-success ">Registrar Concurso</button>  
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% include 'core/includes/popup_msn.html' %}
+    
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm',
+            });
+        });
+
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm',
+            });
+        });
+
+        $(window).on('load',function(){
+            {% if meessage %}
+                $('#msnModal').modal('show');
+            {% endif %}
+        });
+    </script>
+{% endblock  %}

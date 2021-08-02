@@ -1,0 +1,26 @@
+{% extends 'acceso/base_acceso.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block mainimage %}{% load static %}{% static 'core/imgs/login.jpg' %}{% endblock %}
+
+{% block maincontent %}  
+<!-- Cabecera -->
+    
+    <form method="post" action="{% url 'login_action' %}">{% csrf_token %}
+        {# A more "HTML" way of creating the login form#}
+        <div class="input-group mb-3">
+            <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">E-mail</span></div>
+            <input type="text" name="email" placeholder="e-mail" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+
+        <div class="input-group mb-3">
+            <div style="width:25%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Contraseña</span></div>
+            <input type="password" name="password" placeholder="**********" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+
+        <button type="submit" value="Login" class="btn btn-success" > Login</button>  
+    </form>
+
+    <span class="subheading">{{ message }}</span>
+{% endblock  %}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lan="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        {% load static %}
+        <title>{% block title %}{% endblock %} | VideoShare</title>
+
+        <!-- Estilos y fuentes del template  -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        
+        <!-- Estilos Secundarios -->
+        <link href="{% static 'core/css/clean-blog.min.css'%}" rel="stylesheet">
+        <link href="{% static 'core/vendor/font-awesome/css/font-awesome.min.css'%}" rel="stylesheet" type="text/css"> 
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'> 
+        <!--<link href="{% static 'core/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">-->
+
+    </head>
+    <body>
+        <!-- Navegación -->
+        <nav class="navbar navbar-expand-sm bg-light"><!--bar navbar-expand-sm bg-light-->
+            <div class="container">
+                <a class="navbar-brand" href="{% url "info" %}">VideoShare</a>
+                <div>
+                    <ul class="nav"> <!--bar-nav ml-auto -->
+                        <li class="nav-item">
+                            <a class="nav-link"  href="{% url "login" %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url "singin" %}">Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <header class="masthead" style="background-image: url('{% block mainimage %}{% endblock %}')">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 mx-auto">      
+                        <div class="site-heading">
+                            <!-- Contenido Dinámico -->
+                            {% block maincontent %}{% endblock %}
+                            {% block secondarycontent %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% block how2use %}{% endblock %}
+
+        <!-- Pié de página -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <p class="copyright text-muted">· For more information go to <a href="https://github.com/JuanCatica/VideoShare" target="_blank">this repo</a> ·</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
