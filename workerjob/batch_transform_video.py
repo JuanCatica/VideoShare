@@ -10,7 +10,7 @@ import requests
 # STATES
 EN_PROCESO = "En Proceso"
 CONVERTIDO  = "Convertido"
-
+ASIGNADO  = "Asignado"
 # ----------------------------------------
 # DIRECCIONES ASOCIADAS LOS ARCHIVOS MEDIA
 
