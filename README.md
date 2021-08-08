@@ -14,21 +14,15 @@ Consideraciónes [es]:
 ## 1. Linux dependencies
 
 ```bash
-sudo apt-get update -y
-sudo apt install ffmpeg -y
-sudo apt install libsm6 -y
-sudo apt install libxext6 -y
-sudo apt install libxrender-dev -y
-sudo apt-get install python3-pip -y
-sudo apt-get install python3-dev -y
-sudo apt-get install libpq-dev -y
-sudo apt-get install nginx -y
+sudo apt-get update
+sudo apt install ffmpeg libsm6 libxext6 libxrender-dev
+sudo apt-get install python3-pip python3-dev libpq-dev nginx
 
-sudo apt install gnupg -y
-sudo apt update -y
+sudo apt install gnupg
+sudo apt update
 wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
 sudo dpkg -i mysql-apt-config*
-sudo apt-get install mysql-server -y
+sudo apt-get install mysql-server
 rm mysql-apt-config*
 ```
 

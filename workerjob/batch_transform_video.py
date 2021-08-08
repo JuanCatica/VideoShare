@@ -51,16 +51,8 @@ EPASS = config.get("MAIL","epass")
 FFMPEG = config.get("FFMPEG","ffmpeg")
 FFMPEG_ARGS = config.get("FFMPEG","ffmpeg_args", fallback='')
 SERVICE_PORT = config.get("SERVICE","port")
-
-# URL DEL SERVICIO
-URL_WEB = None
-URL_WEB_CONCURSOS = None
-try:
-    r = requests.get("http://169.254.169.254/latest/meta-data/public-hostname",timeout=0.5)
-    URL_WEB = "{}:{}".format(r.text,SERVICE_PORT)
-    URL_WEB_CONCURSOS = "{}/concurso/".format(URL_WEB)
-except Exception as e:
-    pass
+URL_WEB = config.get("WEEAPP","urlweb")
+URL_WEB_CONCURSOS = "{}/concurso/".format(URL_WEB)
 
 def create_connection():
     """ 
