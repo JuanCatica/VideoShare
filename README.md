@@ -187,7 +187,7 @@ sudo systemctl stop nginx
 sudo systemctl stop gunicorn
 ```
 
-### If you change db
+### If you change db (Maybe connect to a RDS)
 ```bash
 mysql -u root --host database-1.???.??.??.amazonaws.com  -p -e "create database videoshare"
 source vsvenv/bin/activate
@@ -197,8 +197,8 @@ python manage.py migrate
 
 #### If you need to restart
 ```bash
+# sudo systemctl enable gunicorn.socket
 sudo systemctl start gunicorn.socket
-sudo systemctl enable gunicorn.socket
 file /run/gunicorn.sock
 curl --unix-socket /run/gunicorn.sock localhost
 sudo systemctl status gunicorn

@@ -66,6 +66,7 @@ def home(request):
         'username':request.user.username,
         'contests_stats':zip_contests_stats,
         'contest_form':ContestForm(),
+        "instance_id":INTANCE_ID
     }
     return render(request, "core/home.html", context)
 
@@ -77,7 +78,8 @@ def create_new_contest_view(request):
     """
     context = {
         'username':request.user.username,
-        'contest_form':ContestForm()
+        'contest_form':ContestForm(),
+        "instance_id":INTANCE_ID
     }
     return render(request, "core/newcontest.html", context)
 
@@ -89,7 +91,8 @@ def create_new_contest_action(request):
     """
     context = {
         'username':request.user.username,
-        'contest_form':ContestForm()
+        'contest_form':ContestForm(),
+        "instance_id":INTANCE_ID
     }
     if request.method == 'POST':
         contest_form = ContestForm(request.POST,request.FILES)
@@ -161,6 +164,7 @@ def update_contest_view(request):
             'username':request.user.username,
             'contest_form':old_contest_form,
             'old_contest_id':id_contest,
+            "instance_id":INTANCE_ID
         }
         return render(request, "core/updatecontest.html", context)
     return HttpResponseRedirect(reverse('home'))
@@ -174,6 +178,7 @@ def update_contest_action(request):
     """
     context = {
         'username':request.user.username,
+        "instance_id":INTANCE_ID
     }
     if request.method == 'POST':
         # --------------------------------------------------------------

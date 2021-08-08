@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import configparser 
+import requests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,6 +124,19 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+INTANCE_ID = "Sin Id :("
+try:
+    r = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4",timeout=0.5)
+    INTANCE_ID = r.text
+except Exception as e:
+    pass
+
+# INSTANCE IP
+#try:
+#    INTANCE_ID = socket.gethostbyname(socket.gethostname())
+#except:
+#    INTANCE_ID = "Sin Id :("
 
 
 # Internationalization

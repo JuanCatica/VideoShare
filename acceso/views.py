@@ -12,7 +12,7 @@ def info_view(request):
     """
     Pagina de inicio.
     """
-    return render(request, "acceso/info.html")
+    return render(request, "acceso/info.html", {"instance_id":INTANCE_ID})
 
 def login_view(request):
     """
@@ -20,14 +20,14 @@ def login_view(request):
     """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('home'))
-    return render(request, "acceso/login.html")
+    return render(request, "acceso/login.html", {"instance_id":INTANCE_ID})
 
 def singin_view(request):
     """
     Visualización de la pagina de registro.
     """
     logout(request)
-    return render(request, "acceso/singin.html")
+    return render(request, "acceso/singin.html", {"instance_id":INTANCE_ID})
 
 def register(request):
     """
@@ -46,7 +46,7 @@ def register(request):
             print(user_form.errors)
     else:
         user_form = UserForm()
-    return render(request,'acceso/register.html', {'user_form':user_form,'registered':registered})
+    return render(request,'acceso/register.html', {'user_form':user_form,'registered':registered, "instance_id":INTANCE_ID})
 
 def login_action(request):
     """
@@ -58,7 +58,7 @@ def login_action(request):
         try:
             user = User.objects.get(email=email)
         except:
-            return render(request, 'acceso/login.html',{'message':"Ese correo que nos diste no esta en nuestra base de datos :("})
+            return render(request, 'acceso/login.html',{'message':"Ese correo que nos diste no esta en nuestra base de datos :(", "instance_id":INTANCE_ID})
         
         #user = authenticate(email=email, password=password)
         #if user:
@@ -67,16 +67,16 @@ def login_action(request):
                 login(request,user)
                 return HttpResponseRedirect(reverse('home'))
             else:
-                return render(request, 'acceso/login.html',{'message':"Eres un usuario inactivo :("})
+                return render(request, 'acceso/login.html',{'message':"Eres un usuario inactivo :(", "instance_id":INTANCE_ID})
         else:
             print("> PyMessge: Faild Login, username: {}, password: {}".format(email,password))
-            return render(request, 'acceso/login.html',{'message':"Credenciales de Acceso Invalidas :("})
+            return render(request, 'acceso/login.html',{'message':"Credenciales de Acceso Invalidas :(", "instance_id":INTANCE_ID})
     else:
-        return render(request, 'acceso/login.html',{})
+        return render(request, 'acceso/login.html',{"instance_id":INTANCE_ID})
 
 def logout_action(request):
     """
     Acción de Salida de la pagina.
     """
     logout(request)
-    return render(request, 'acceso/login.html')
+    return render(request, 'acceso/login.html', {"instance_id":INTANCE_ID})

@@ -17,7 +17,7 @@ def contest_home(request, url_contest, msn=None):
     """
     contest = get_if_exists(Contest, url=url_contest)
     if contest:
-        context = {'contest':contest, 'video_form':VideoForm()}
+        context = {'contest':contest, 'video_form':VideoForm(), "instance_id":INTANCE_ID}
         if msn:
            context['meessage'] = msn
             
@@ -58,7 +58,7 @@ def upload_video_action(request, url_contest):
     """
     Este método pertmire cargar el video que se recibe al gestionar el formulario de nuevos videos para un concurso.
     """
-    context = {'video_form':VideoForm()}
+    context = {'video_form':VideoForm(), "instance_id":INTANCE_ID}
     if request.method == 'POST':
         video_form = VideoForm(request.POST,request.FILES)
         

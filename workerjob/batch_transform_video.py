@@ -77,6 +77,51 @@ def create_connection():
     return conn
 
 
+def get_one_active_process(conn):
+    """
+    Este metodo entrega uno de los registros de videos en estado activo (En proceso).
+    """
+    active_video = {}
+    try:
+        with conn.cursor() as cursor:
+            # ------------------------------
+            # CATCH A VIEDEO
+            sql = """SELECT video.id, videofile, email_competitor, first_name_competitor, title, url
+                    FROM contestservice_video video
+                    INNER JOIN   core_contest contest ON video.fk_contest_id = contest.id
+                    WHERE state='{}'
+                    LIMIT 1""".format(EN_PROCESO)
+            cursor.execute(sql)
+            active_video = cursor.fetchone()
+
+            if active_video:
+                # -----------------------------
+                # UDATE THE STATE OF THE VIEDEO
+                id_video = active_video["id"]
+                sql_update = """UPDATE contestservice_video SET state='{}' WHERE id={};""".format(ASIGNADO,id_video)
+                cursor.execute(sql_update)
+                conn.commit()
+    except Exception as e:
+        log_trans("ERROR: get_one_active_process")
+        log_err("GETP:",e)
+    return active_video
+
+def update_state_after_failure(conn, id_video):
+    """
+    Este metodo entrega uno de los registros de videos en estado activo (En proceso).
+    """
+    try:
+        with conn.cursor() as cursor:
+            # -----------------------------
+            # UDATE THE STATE OF THE VIEDEO
+            sql_update = """UPDATE contestservice_video SET state='{}' WHERE id={};""".format(EN_PROCESO,id_video)
+            cursor.execute(sql_update)
+            conn.commit()
+    except Exception as e:
+        log_trans("ERROR: update_state_after_failure")
+        log_err("GETP:",e)
+
+@DeprecationWarning
 def get_all_active_process(conn):
     """
     Este metodo entrega todos los registros de videos en estado activo (En proceso).
@@ -225,39 +270,33 @@ def log_trans(msn, indentation=0, nl=0, use_date=False):
 
 def main():
     try:
-        log_trans("BLOQUE DE TRASNFORMACION",nl=1, use_date=True)
-        # CREANDO CONEXION A LA BASE DE DATOS
+        # ------------------------------------------------
+        # CREANDO CONEXION A LA BASE DE DATOS SI NO EXISTE
         conn = create_connection()
-        active_videos = get_all_active_process(conn)
-        init_chunk = time.time()
-
-        i = 0
-        t = 0
-        for row in active_videos: 
-            i += 1
+        x_video = get_one_active_process(conn)
+        if x_video: 
             video_ok = False
-            id_video, path, mail, name, name_video, url_video = row['id'],row['videofile'],row['email_competitor'],row['first_name_competitor'],row['title'],row['url']
-            log_trans("INICIO VIDEO: {}".format(id_video),1,use_date=True)
+            id_video, path, mail, name, name_video, url_video = x_video['id'],x_video['videofile'],x_video['email_competitor'],x_video['first_name_competitor'],x_video['title'],x_video['url']
+            log_trans("INICIO VIDEO: {}".format(id_video),0,use_date=True)
+            
             init_video = time.time()
-
             exit_code, path_out = convert_video(path)
             if exit_code == 0:
                 if update_state(conn,id_video, path_out):
                     if send_mail(mail,name,name_video, url_video, id_video):
-                        t += 1
                         video_ok = True
+            else:
+                update_state_after_failure(conn, id_video)
             end_video = time.time()
+
             if video_ok:
-                log_trans("VIDEO OK {0:.3f}s".format(end_video-init_video),1)
+                log_trans("VIDEO OK {0:.3f}s".format(end_video-init_video),0)
             else:
                 log_trans("EXIT CODE {}s".format(exit_code),1)
                 log_trans("VIDEO ERROR {0:.3f}s".format(end_video-init_video),1)
         conn.close()
-
-        end_chunk = time.time()
-        elapsed = "Tiempo {0:.3f}s".format(end_chunk-init_chunk)
-        log_trans("FIN {} de {} Video(s) transformados {}".format(t,i,elapsed))
     except Exception as e:
+        print("Error Fatal durante la ejecución principal.")
         print("MAIN:",e)
 
 if __name__ == '__main__':
