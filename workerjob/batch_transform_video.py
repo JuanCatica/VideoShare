@@ -50,8 +50,7 @@ EMAIL = config.get("MAIL","email")
 EPASS = config.get("MAIL","epass")
 FFMPEG = config.get("FFMPEG","ffmpeg")
 FFMPEG_ARGS = config.get("FFMPEG","ffmpeg_args", fallback='')
-SERVICE_PORT = config.get("SERVICE","port")
-URL_WEB = config.get("WEEAPP","urlweb")
+URL_WEB = config.get("WEBAPP","urlweb")
 URL_WEB_CONCURSOS = "{}/concurso/".format(URL_WEB)
 
 def create_connection():

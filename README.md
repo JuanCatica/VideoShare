@@ -2,7 +2,7 @@
 
 Servicio para crear concursos de videos, donde amigos, conocidos o cualquier persona que desee participar puede subir sus videos. Para ello <b>VideoShare</b> transforma los videos en formato .FLV, .WMV y .AVI a MP4; cuando cada video esta listo, se envia una notificación al participante informandole que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
 
-# INSTALATION PROCESS
+# 1. MONOLITHIC MODE - INSTALATION PROCESS
 
 ## DJango dependencies
 
@@ -198,4 +198,70 @@ curl --unix-socket /run/gunicorn.sock localhost
 sudo systemctl status gunicorn
 sudo nginx -t
 sudo systemctl restart nginx
+```
+
+# 2. DISTRIBUTED MODE
+
+## 1. Create a RDS (MySQL)
+
+## 2. Create an ALB
+
+## 3. Create a regular instance
+
+Create a reagular instance whit the same AMI you create the monolithic ```Debian 10 (HVM), SSD Volume Type - ami-07d02ee1eeb0c996c (64-bit x86) / ami-08b2293fdd2deba2a (64-bit Arm)```.
+
+Then execute:
+
+### NFS HOST
+
+```bash
+#!/bin/bash
+cd /home/admin
+mkdir media
+cd media
+mkdir contests
+mkdir videos
+mkdir videos_ffmpeg
+mkdir videos_image
+chown -R admin /home/admin/media
+chgrp -R admin /home/admin/media
+sudo apt-get update
+sudo apt-get install nfs-kernel-server -y
+sudo echo "/home/admin/media 10.0.0.0/16(rw,sync,no_root_squash,no_subtree_check)" >> /etc/exports
+sleep 10
+sudo systemctl restart nfs-kernel-server
+```
+
+**Note:** Be aware of the CIDR block you specify for the subnet where the instance will be located. The previous cript use ```10.0.0.0/16``` but you can change it to match you needs.
+
+## 4. Create Web and Workers 
+
+Base on AMI you have.
+
+### Bootstrap script
+
+```bash
+#!/bin/bash
+sudo mount <private-ipv4-nfs-host>:/home/admin/media /home/admin/videoshare/media/
+```
+
+Using hust the web intances execute the next steps:
+
+#### DB Creation and initi Django
+
+```bash
+sudo systemctl stop nginx
+sudo systemctl stop gunicorn
+```
+
+```bash
+mysql -u root --host database-1.???.??.??.amazonaws.com  -p -e "create database videoshare"
+source videoshare/vsvenv/bin/activate
+python manage.py makemigrations
+python manage.py migrate
+```
+
+```bash
+sudo systemctl start nginx
+sudo systemctl start gunicorn
 ```
