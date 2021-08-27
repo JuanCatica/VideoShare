@@ -238,8 +238,6 @@ sudo systemctl restart nfs-kernel-server
 
 ## 4. Create Web and Workers 
 
-Base on AMI you have.
-
 ### Bootstrap script
 
 ```bash
@@ -249,7 +247,7 @@ sudo mount <private-ipv4-nfs-host>:/home/admin/media /home/admin/videoshare/medi
 
 Using hust the web intances execute the next steps:
 
-#### DB Creation and initi Django
+#### DB Creation and init Django
 
 ```bash
 sudo systemctl stop nginx
