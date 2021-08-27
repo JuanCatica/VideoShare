@@ -200,7 +200,9 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-# 2. DISTRIBUTED MODE
+# 2. MODELO DISTRIBUIDO
+
+Este modelo contempla una arquitectura distribuida
 
 ## 1. Create a RDS (MySQL)
 
