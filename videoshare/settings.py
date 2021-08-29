@@ -98,9 +98,9 @@ except Exception as e:
 
 config = configparser.ConfigParser()
 config.read(os.path.join(BASE_DIR, "config.conf"))
-secret_name = config.get("SECRETS","name")
-region_name = config.get("SECRETS","region")
-CONFIGS = get_secret(secret_name, region_name)
+SECRET_NAME = config.get("SECRETS","name")
+REGION_NAME = config.get("SECRETS","region")
+CONFIGS = get_secret(SECRET_NAME, REGION_NAME)
 
 DATABASES = {
     'default': {

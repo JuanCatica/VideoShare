@@ -226,11 +226,6 @@ def delete_contest(request):
         id_contest = int(request.POST.get('id_contest', '-1'))
         query = Contest.objects.get(id=id_contest)
         query.delete()
-    context = {
-        'username':request.user.username,
-        'contests':Contest.objects.all().filter(fk_user=request.user),
-        'contest_form':ContestForm(),
-    }
     return HttpResponseRedirect(reverse('home'))
 
 @login_required
