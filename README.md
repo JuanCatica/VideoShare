@@ -71,6 +71,7 @@ deactivate
 For more information about Gunicorn & Nginx [Check this.](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04)
 
 You can check gunicorn whit the next command:
+
 ```bash
 gunicorn --bind 0.0.0.0:8000 videoshare.wsgi
 ```
@@ -82,6 +83,7 @@ sudo nano /etc/systemd/system/gunicorn.socket
 ```
 
 Paste this:
+
 ```toml
 [Unit]
 Description=gunicorn socket
@@ -100,6 +102,7 @@ sudo nano /etc/systemd/system/gunicorn.service
 ```
 
 Paste this:
+
 ```toml
 [Unit]
 Description=gunicorn daemon
@@ -130,6 +133,7 @@ sudo nano /etc/nginx/sites-available/videoshare
 ```
 
 Paste this:
+
 ```js
 server {
     listen 8080;
@@ -154,34 +158,42 @@ sudo ln -s /etc/nginx/sites-available/videoshare /etc/nginx/sites-enabled
 ```
 
 ### Config Nginx to upload lagger files
+
 Add the next line in the http section of the '/etc/nginx/nginx.conf' file.
+
 ```js
     client_max_body_size 100M;
 ```
 
 ### Restart Nginx
+
 ```bash
 sudo systemctl restart nginx
 ```
 
 ### Set the cronjob
+
 ```bash
 crontab -e
 ```
 
 Paste this:
+
 ```bash
 * * * * * bash /home/admin/videoshare/worker.sh
 ```
 
 ---------------------------
+
 #### If you need to stop
+
 ```bash
 sudo systemctl stop nginx
 sudo systemctl stop gunicorn
 ```
 
 ### If you change db (Maybe connect to a RDS)
+
 ```bash
 mysql -u root --host database-1.???.??.??.amazonaws.com  -p -e "create database videoshare"
 source vsvenv/bin/activate
@@ -190,6 +202,7 @@ python manage.py migrate
 ```
 
 #### If you need to restart
+
 ```bash
 # sudo systemctl enable gunicorn.socket
 sudo systemctl start gunicorn.socket
@@ -236,7 +249,7 @@ sudo systemctl restart nfs-kernel-server
 
 **Note:** Be aware of the CIDR block you specify for the subnet where the instance will be located. The previous cript use ```10.0.0.0/16``` but you can change it to match you needs.
 
-## 4. Create Web and Workers 
+## 4. Create Web and Workers
 
 Base on AMI you have.
 
