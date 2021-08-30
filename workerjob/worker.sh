@@ -7,11 +7,10 @@ source vsvenv/bin/activate
 # pgrep: Looks through the currently running processes and lists the process IDs which match the selection criteria to stdout.
 if ! pgrep -f 'worker.py'
 then
-    nohup python ./workerjob/worker.py > ./workerjob/logs/super.log &
+    nohup python ./worker.py > ./logs/super.log &
 else
-	echo "Overlap:" `date` >> ./workerjob/logs/overlaps.log
+	echo "Overlap:" `date` >> ./logs/overlaps.log
 fi
 
 deactivate
-
 #* * * * * bash /home/admin/videoshare/worker.sh

@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import configparser 
 import requests
-from secrets import get_secret
+from .secrets import get_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -109,7 +109,7 @@ DATABASES = {
         'USER': CONFIGS["rds_user"],
         'PASSWORD': CONFIGS["rds_pass"],
         'HOST': CONFIGS["rds_url"],
-        'PORT': CONFIGS["rds_port"],
+        'PORT': int(CONFIGS["rds_port"]),
     }
 }
 

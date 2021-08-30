@@ -161,8 +161,10 @@ def download_video_from_S3(DATA, STAT, CONFIGS):
         return
 
     try:
+        pass
         s3 = boto3.resource('s3')
-        temp_path = './media/videos/{}'.format(DATA["VIDEO_NAME_EXT"])
+        #temp_path = './media/videos/{}'.format(DATA["VIDEO_NAME_EXT"])
+        temp_path = '{}/{}'.format(MEDIA_VIDEO_ROOT, DATA["VIDEO_NAME_EXT"])
         s3.Bucket(CONFIGS["s3_url"]).download_file(DATA["KEY"], temp_path)
         STAT["S2"] = STATUS_OK
     except Exception as e:
@@ -190,9 +192,10 @@ def convert_video(DATA, STAT, CONFIGS):
     # /Users/juancatica/Cloud/recursos/ffmpeg -i "https://d3rjwawu0g5wjw.cloudfront.net/videos/1586058232-937135-concursinit-test2.AVI" 
     # "https://d3rjwawu0g5wjw.cloudfront.net/videos_ffmpeg/1586058232-937135-concursinit-test2.AVI"
     try:
-        video_path_in = "./media/videos/{}".format(DATA["VIDEO_NAME_EXT"])
-        video_path_out = "./media/videos_ffmpeg/{}.mp4".format(DATA["VIDEO_NAME"])
-        comando = "{} -i {} {} {} -y".format(CONFIGS["_ffmpeg"], video_path_in, CONFIGS["_ffmpeg_args"], video_path_out)
+        video_path_in = "{}/{}".format(MEDIA_VIDEO_ROOT, DATA["VIDEO_NAME_EXT"])
+        video_path_out = "{}/{}.mp4".format(MEDIA_VIDEO_FFMPEG_ROOT,DATA["VIDEO_NAME"])
+        comando = "{} -i '{}' {} '{}' -y".format(CONFIGS["_ffmpeg"], video_path_in, CONFIGS["_ffmpeg_args"], video_path_out)
+        print("COMANDO ...",comando)
         exit_code = os.system(comando)
         if exit_code == 0:
             STAT["S3"] = STATUS_OK
@@ -220,7 +223,7 @@ def save_image_from_video(DATA, STAT, rate=1.5, width=220):
         return
         
     try:
-        video_file = "./media/videos_ffmpeg/{}.mp4".format(DATA["VIDEO_NAME"])
+        video_file = "{}/{}.mp4".format(MEDIA_VIDEO_FFMPEG_ROOT, DATA["VIDEO_NAME"])
         vidcap = cv2.VideoCapture(video_file)
         success,image = vidcap.read()
         if success:
@@ -233,7 +236,7 @@ def save_image_from_video(DATA, STAT, rate=1.5, width=220):
                 dy = int((y-(x/rate))/2.0)
             sliced_image = image[dy:y-dy, dx:x-dx, :]
             rechaped = cv2.resize(sliced_image, output_shape, interpolation = cv2.INTER_AREA)
-            cv2.imwrite("./media/videos_image/{}.jpg".format(DATA["VIDEO_NAME"]), rechaped)
+            cv2.imwrite("{}/{}.jpg".format(MEDIA_IMG_VIDEO_ROOT, DATA["VIDEO_NAME"]), rechaped)
             STAT["S4"] = STATUS_OK
         else:
             STAT["S4"] = STATUS_FAIL
@@ -259,11 +262,11 @@ def upload_video_img_S3(DATA, STAT, CONFIGS):
         
     try:
         s3 = boto3.resource('s3')
-        video_ffmpeg_file = "./media/videos_ffmpeg/{}.mp4".format(DATA["VIDEO_NAME"])
+        video_ffmpeg_file = "{}/{}.mp4".format(MEDIA_VIDEO_FFMPEG_ROOT, DATA["VIDEO_NAME"])
         video_ffmpeg_key = 'videos_ffmpeg/{}.mp4'.format(DATA["VIDEO_NAME"])
         s3.Object(CONFIGS["s3_url"], video_ffmpeg_key).put(Body=open(video_ffmpeg_file, 'rb'), ACL = 'public-read')
 
-        video_img_file = "./media/videos_image/{}.jpg".format(DATA["VIDEO_NAME"])
+        video_img_file = "{}/{}.jpg".format(MEDIA_IMG_VIDEO_ROOT, DATA["VIDEO_NAME"])
         video_img_key = 'videos_image/{}.jpg'.format(DATA["VIDEO_NAME"])
         s3.Object(CONFIGS["s3_url"], video_img_key).put(Body=open(video_img_file, 'rb'), ACL = 'public-read')
         STAT["S5"] = STATUS_OK
@@ -290,7 +293,7 @@ def update_db_state(DATA, STAT, CONFIGS):
     try:
         conn = pymysql.connect(
             host=CONFIGS["rds_url"],
-            port=CONFIGS["rds_port"],
+            port=int(CONFIGS["rds_port"]),
             user=CONFIGS["rds_user"],
             password=CONFIGS["rds_pass"],
             db=CONFIGS["rds_db"], 
@@ -315,8 +318,8 @@ def update_db_state(DATA, STAT, CONFIGS):
         with conn.cursor() as cursor:
             # -----------------------------
             # UDATE THE STATE OF THE VIEDEO
-            update_str = " ".join([f"{k}='{v}'" for k,v in UPDATE_DIC.items()])
-            sql_update = """UPDATE contestservice_video SET {}  WHERE id={};""".format(update_str,DATA["VIDEO_ID"])
+            update_str = " ".join([f""" {k} = "{v}", """ for k,v in UPDATE_DIC.items()]).strip(" ").strip(",")
+            sql_update = """UPDATE contestservice_video SET {} WHERE id={};""".format(update_str,DATA["VIDEO_ID"])
             cursor.execute(sql_update)
             conn.commit()
         #collection.update_one({"id":DATA["VIDEO_ID"]},{"$set":UPDATE_DIC}, upsert=False) ######### IMPORTANTE: CAMBIAR A MYSQL
@@ -343,7 +346,7 @@ def delete_SQS_message(DATA, STAT, CONFIGS):
         
     try:
         sqs = boto3.client('sqs',region_name=CONFIGS["_region"])
-        sqs.delete_message(QueueUrl=CONFIGS["_region"],ReceiptHandle=DATA["RECEIPT_HANDLE"])
+        sqs.delete_message(QueueUrl=CONFIGS["sqs_url"],ReceiptHandle=DATA["RECEIPT_HANDLE"])
         STAT["S7"] = STATUS_OK
     except ClientError as e:
         STAT["S7"] = STATUS_FAIL
@@ -401,11 +404,10 @@ def send_mail_SES(DATA, STAT, CONFIGS):
     if STAT["JOB"] != STATUS_OK:
         return
         
-    WEB_URI = DATA["WEB_URI"]
-    WEB_PORT = DATA["WEB_PORT"]
-    URL_WEB = "{}:{}/".format(WEB_URI,WEB_PORT)
+    WEB_URI = CONFIGS["web_url"]
+    WEB_PORT = CONFIGS["web_port"]
     URL_WEB_CONCURSOS = "{}:{}/concurso/".format(WEB_URI,WEB_PORT)
-    AWS_REGION = CONFIGS["region"]
+    AWS_REGION = CONFIGS["_region"]
     
     SUBJECT = "Video disponible :D"
     BODY_TEXT = ("Video disponible :D\r\n"
@@ -541,17 +543,18 @@ def run():
     
     # -----------------------
     # Envio de datos a splunk
-    try:
-        url = f'{configs["splunk_api_protocol"]}://{configs["splunk_api_url"]}:{configs["splunk_api_port"]}/services/collector/event'
-        header = { "Authorization": f'Splunk {configs["splunk_api_token"]}' }
-        data = { "index":configs["splunk_index"], "source": configs["splunk_source"], "sourcetype": configs["splunk_sourcetype"], "event": data }
-        data = str(data).replace("'",'"')
-        r = requests.post(url, headers=header, data=data, verify=False, timeout=5)
-    except Exception as e:
-        log_err("SPLUNK:",e,stat)
+    if stat["JOB"] != STATUS_NO_MSN:
+        try:
+            url = f'{configs["splunk_api_protocol"]}://{configs["splunk_api_url"]}:{configs["splunk_api_port"]}/services/collector/event'
+            header = { "Authorization": f'Splunk {configs["splunk_api_token"]}' }
+            data = { "index":configs["splunk_index"], "source": configs["splunk_source"], "sourcetype": configs["splunk_sourcetype"], "event": data }
+            data = str(data).replace("'",'"')
+            r = requests.post(url, headers=header, data=data, verify=False, timeout=5)
+        except Exception as e:
+            log_err("SPLUNK:",e,stat)
 
 if __name__ == '__main__':
-    run()
+    #run()
     sched = BlockingScheduler()
     @sched.scheduled_job('interval', seconds=20)
     def timed_job():
