@@ -13,4 +13,4 @@ else
 fi
 
 deactivate
-#* * * * * bash /home/admin/videoshare/worker.sh
+#* * * * * bash /home/admin/workerjob/worker.sh

@@ -10,29 +10,21 @@ Consideraciónes [es]:
 ## 1. Linux
 
 ```bash
-sudo apt-get update
-sudo apt install ffmpeg libsm6 libxext6 libxrender-dev
-sudo apt-get install python3-pip python3-dev libpq-dev nginx
-
-sudo apt install gnupg
-sudo apt update
-wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
-sudo dpkg -i mysql-apt-config*
-sudo apt-get install mysql-server
-rm mysql-apt-config*
-```
-
-Only if you need:
-
-```bash
-sudo systemctl status mysql
-sudo systemctl start mysql
+sudo apt-get update -y
+sudo apt install libsm6 libxext6 libxrender-dev unzip -y
+sudo apt-get install python3-pip python3-dev libpq-dev nginx -y
+wget https://github.com/JuanCatica/VideoShare/archive/refs/heads/main.zip
+unzip main.zip
+rm main.zip
+mv VideoShare-main/web .
+mv web videoshare
+rm -rf VideoShare-main/
+cd videoshare
 ```
 
 ## 2. Python virtual environment
 
 ```bash
-cd videoshare
 pip3 install virtualenv
 ~/.local/bin/virtualenv vsvenv
 source vsvenv/bin/activate
@@ -41,9 +33,7 @@ source vsvenv/bin/activate
 ## 3. Pip dependencies
 
 ```bash
-pip3 install django==2.0.5 gunicorn
-pip3 install requests opencv-python pillow pymysql
-pip3 install cryptography
+pip3 install django gunicorn requests opencv-python pillow pymysql cryptography boto3
 ```
 
 ## 4. Django init
@@ -52,20 +42,27 @@ pip3 install cryptography
 python manage.py collectstatic
 python manage.py makemigrations
 python manage.py migrate
-deactivate
 ```
 
 ## 5. Gunicorn & Nginx configuration
 
 For more information about Gunicorn & Nginx [Check this.](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04)
 
-You can check gunicorn whit the next command:
+Se puede verficicar la funcionalidad de la web mediante el siguiente comando:
 
 ```bash
 gunicorn --bind 0.0.0.0:8000 videoshare.wsgi
 ```
 
-### Gunicorn socket
+Una vez se encuente ejecutando, se puede ingresar a la página web mediante la IP Publica asignada a la instancias EC2 en la que se encuentra en este instante. Accediendo a: ```http://<IP-Publica-EC2>:8000```
+
+Una vez se ha verificado el acceso a la app es conveniente desactivar el entorno virtual de python. 
+
+```bash
+deactivate
+```
+
+### 5.1 Gunicorn socket
 
 ```bash
 sudo nano /etc/systemd/system/gunicorn.socket
@@ -84,7 +81,7 @@ ListenStream=/run/gunicorn.sock
 WantedBy=sockets.target
 ```
 
-### Gunicorn service
+### 5.2 Gunicorn service
 
 ```bash
 sudo nano /etc/systemd/system/gunicorn.service
@@ -101,20 +98,39 @@ After=network.target
 User=admin
 Group=www-data
 WorkingDirectory=/home/admin/videoshare
-ExecStart=/home/admin/videoshare/vsvenv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/admin/videoshare/videoshare.sock videoshare.wsgi:application
+ExecStart=/home/admin/videoshare/vsvenv/bin/gunicorn \
+    --access-logfile - \
+    --workers 3 \
+    --bind unix:/run/gunicorn.sock \
+    videoshare.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-### Start and Test Gunicorn
+### 5.3 Start and Test Gunicorn
 
 ```bash
 sudo systemctl start gunicorn.socket
 sudo systemctl enable gunicorn.socket
+sudo systemctl status gunicorn.socket
 file /run/gunicorn.sock
+
+# En caso de error
+# sudo journalctl -u gunicorn
+```
+
+```bash
+sudo systemctl status gunicorn
 curl --unix-socket /run/gunicorn.sock localhost
 sudo systemctl status gunicorn
+
+# En caso de error
+# sudo journalctl -u gunicorn
+
+# En caso de ejecutar cambios
+#sudo systemctl daemon-reload
+#sudo systemctl restart gunicorn
 ```
 
 ```bash
@@ -126,7 +142,7 @@ Paste this:
 ```js
 server {
     listen 8080;
-    server_name 172.31.27.251; 
+    server_name <EC2-Private-IP>; 
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
@@ -148,7 +164,11 @@ sudo ln -s /etc/nginx/sites-available/videoshare /etc/nginx/sites-enabled
 
 ### Config Nginx to upload lagger files
 
-Add the next line in the http section of the '/etc/nginx/nginx.conf' file.
+Add the next line in the ```http``` section of the '/etc/nginx/nginx.conf' file.
+
+```bash
+sudo nano /etc/nginx/nginx.conf
+```
 
 ```js
     client_max_body_size 100M;
@@ -157,6 +177,7 @@ Add the next line in the http section of the '/etc/nginx/nginx.conf' file.
 ### Restart Nginx
 
 ```bash
+sudo nginx -t
 sudo systemctl restart nginx
 ```
 
@@ -167,28 +188,4 @@ sudo systemctl restart nginx
 ```bash
 sudo systemctl stop nginx
 sudo systemctl stop gunicorn
-```
-
-#### If you need to restart
-
-```bash
-# sudo systemctl enable gunicorn.socket
-sudo systemctl start gunicorn.socket
-file /run/gunicorn.sock
-curl --unix-socket /run/gunicorn.sock localhost
-sudo systemctl status gunicorn
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-#### Stop and Start nginx and gunicorn
-
-```bash
-sudo systemctl stop nginx
-sudo systemctl stop gunicorn
-```
-
-```bash
-sudo systemctl start nginx
-sudo systemctl start gunicorn
 ```

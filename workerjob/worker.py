@@ -8,14 +8,12 @@ import cv2
 import json
 import boto3
 import time
-import pymongo
 import socket
 import pymysql.cursors
 import configparser 
 import requests
 from secrets import get_secret
 from os import remove
-from pymongo import MongoClient
 from datetime import datetime
 from botocore.exceptions import ClientError
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -554,10 +552,10 @@ def run():
             log_err("SPLUNK:",e,stat)
 
 if __name__ == '__main__':
-    #run()
-    sched = BlockingScheduler()
-    @sched.scheduled_job('interval', seconds=20)
-    def timed_job():
-        print("Ejecutando ...")
-        run()
-    sched.start()
+    run()
+    #sched = BlockingScheduler()
+    #@sched.scheduled_job('interval', seconds=20)
+    #def timed_job():
+    #    print("Ejecutando ...")
+    #    run()
+    #sched.start()
