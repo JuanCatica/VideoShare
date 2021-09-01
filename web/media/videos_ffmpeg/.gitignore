@@ -1,0 +1,4 @@
+# Se ignora todo lo que este en este directorio
+*
+# Con excepcion de este
+!.gitignore

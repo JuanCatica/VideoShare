@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import configparser 
 import requests
+from .secrets import get_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -86,24 +87,29 @@ WSGI_APPLICATION = 'videoshare.wsgi.application'
 #}
 
 
-# -----------------------------------
-# LECTURA DE ARCHIVO DE CONFIGURACIÓN
+# -------------------------------------
+# LECTURA DE VARIABLES DE CONFIGURACIÓN
+INTANCE_ID = "Sin Id :("
+try:
+    r = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4",timeout=1)
+    INTANCE_ID = r.text
+except Exception as e:
+    pass
+
 config = configparser.ConfigParser()
 config.read(os.path.join(BASE_DIR, "config.conf"))
-HOST = config.get("DATABASE","host")
-PORT = config.get("DATABASE","port")
-USER = config.get("DATABASE","user")
-PASS = config.get("DATABASE","pass")
-DB = config.get("DATABASE","db")
+SECRET_NAME = config.get("SECRETS","name")
+REGION_NAME = config.get("SECRETS","region")
+CONFIGS = get_secret(SECRET_NAME, REGION_NAME)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': DB,
-        'USER': USER,
-        'PASSWORD': PASS,
-        'HOST': HOST,
-        'PORT': PORT,
+        'NAME': CONFIGS["rds_db"],
+        'USER': CONFIGS["rds_user"],
+        'PASSWORD': CONFIGS["rds_pass"],
+        'HOST': CONFIGS["rds_url"],
+        'PORT': int(CONFIGS["rds_port"]),
     }
 }
 
@@ -124,20 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-INTANCE_ID = "Sin Id :("
-try:
-    r = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4",timeout=0.5)
-    INTANCE_ID = r.text
-except Exception as e:
-    pass
-
-# INSTANCE IP
-#try:
-#    INTANCE_ID = socket.gethostbyname(socket.gethostname())
-#except:
-#    INTANCE_ID = "Sin Id :("
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

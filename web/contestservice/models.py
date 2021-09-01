@@ -22,9 +22,15 @@ class Video(models.Model):
     description = models.TextField(verbose_name="Descripción")
     state = models.CharField(verbose_name="Estado Video", default=EN_PROCESO, choices=STATE, max_length=12)
     description = models.TextField(verbose_name="Descripción")
-    image = models.ImageField(verbose_name="Imagen", upload_to="videos_image", null=True , blank=True, ) 
-    videofile= models.FileField(verbose_name="Video", upload_to='videos')
-    videofile_format = models.FileField(verbose_name="Video Formateado", upload_to='videos_ffmpeg')
+    
+    #image = models.ImageField(verbose_name="Imagen", upload_to="videos_image", null=True , blank=True, ) 
+    #videofile= models.FileField(verbose_name="Video", upload_to='videos')
+    #videofile_format = models.FileField(verbose_name="Video Formateado", upload_to='videos_ffmpeg',)
+
+    image_s3_url = models.CharField(verbose_name="Imagen",  max_length=200) 
+    videofile_s3_url= models.CharField(verbose_name="Video",  max_length=200)
+    videofile_format_s3_url = models.CharField(verbose_name="Video Formateado",  max_length=200)
+    
     positives = models.IntegerField(verbose_name="Positivos", default=0)
     negatives = models.IntegerField(verbose_name="Negativos", default=0)
     load_date = models.DateTimeField(verbose_name="Fecha Carga", auto_now_add=True) 
