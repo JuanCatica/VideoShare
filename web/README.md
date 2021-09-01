@@ -1,4 +1,4 @@
-# VIDEOSHARE WEB
+# VIDEOSHARE WEB (web-ami)
 
 En esta guía se exponen los pasos a ejecutar para generar la AMI (Imagen) requerida durante conformación de la capa web del servicio **VideoShare**.
 
