@@ -2,7 +2,7 @@
 
 <b>VideoShare</b> es un proyecto que se centra en la construción servicio en el cual sea posible crear concursos de videos, donde amigos, conocidos o cualquier persona que desee participar puede subir sus videos y comportirlos con los demás. Para ello <b>VideoShare</b> transforma los videos en formato ```.FLV```, ```.WMV``` y ```.AVI``` a ```.MP4```; cuando cada video esta listo, se envia una notificación al participante informandole que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
 
-* [1. Creación de Secreto](##1._Creación_de_Secreto)
+* [1. Creación de Secreto](###1-creación-de-secreto)
 
 # Guía de implementación
 
