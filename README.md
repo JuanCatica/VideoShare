@@ -1,6 +1,6 @@
 # VIDEOSHARE
 
-<b>VideoShare</b> es un proyecto que se centra en la construcción de un servicio, sobre el cual sea posible crear concursos de videos los cuales pueden ser compartidos con amigos, conocidos o cualquier persona que desee participar, pemitiendo a los participantes subir sus videos y comportirlos con los demás. Para ello <b>VideoShare</b> transforma los videos en formato ```.FLV```, ```.WMV``` y ```.AVI``` a ```.MP4```, cuando cada video esta listo se envia una notificación via email al participante informandole que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
+<b>VideoShare</b> es un proyecto que se centra en la construcción de un servicio, sobre el cual sea posible crear concursos de videos los cuales pueden ser compartidos con amigos, conocidos o cualquier persona que desee participar, permitiendo a los participantes subir sus videos y compartirlos con los demás. Para ello <b>VideoShare</b> transforma los videos en formato ```.FLV```, ```.WMV``` y ```.AVI``` a ```.MP4```, cuando cada video esta listo se envía una notificación via email al participante informando que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
 
 * [1. Creación de Secreto](#1-creación-de-secreto)
 * [2. Crear almacenamiento S3](#2-Crear-almacenamiento-S3)
@@ -18,7 +18,7 @@
 
 # Guía de implementación
 
-Esta página (README) es una guía práctica para la implementación del servicio VideoShare en configuración distribuida con auto-escalamiento mediante el proveedor de nube pública AWS. Esta configuración se constituye de mútiples componentes con sus respectivos servicios de AWS, los cuales se observan en la siguiente imagen:
+Esta página (README) es una guía práctica para la implementación del servicio VideoShare en configuración distribuida con auto-escalamiento mediante el proveedor de nube pública AWS. Esta configuración se constituye de múltiples componentes con sus respectivos servicios de AWS, los cuales se observan en la siguiente imagen:
 
 **Arquitectura de solución VideoShare en AWS**:
 ![videoshare-arch](imgs/videoshare-arquitectura.png)
@@ -65,7 +65,7 @@ name = videoshare/develop/config
 region = us-east-1
 
 [FFMPEG]
-ffmpeg = ffmpeg 
+ffmpeg = ffmpeg
 #ffmpeg_args = -strict -2
 ```
 
@@ -109,7 +109,7 @@ Desde este punto podemos dejar las configuraciones por defecto que nos entrega l
 ## 2. Crear almacenamiento S3
 
 Este paso consiste en la [creación de un bucket S3](https://s3.console.aws.amazon.com/s3/bucket/create) el cual almacenará todos los videos originales, los videos transformados junto con las imágenes extraídas y las imágenes de los concursos, para ello se requiere únicamente de la definición del nombre (único global) y de establecer las configuraciones de acceso público a este.
- 
+
 Puesto que el bucket S3 será el origen de nuestra distribución de CloudFront, resulta práctico deshabilitar todo el bloqueo de acceso público en la sección denominada Block Public Access settings for this bucket como se observa a continuación:
 
 ![videoshare-arch](imgs/s3-public-access.png)
@@ -118,7 +118,7 @@ Sin embargo, es posible mejorar la seguridad de nuestra solución realizando la 
 
 ![videoshare-arch](imgs/oai.png)
 
-**Actualización de Secreto:** En este punto procedemos a almacenar el nombre de nuestro bucket en el secreto previamente creado: 
+**Actualización de Secreto:** En este punto procedemos a almacenar el nombre de nuestro bucket en el secreto previamente creado:
 ```json
 "s3_url":"<nombre de nuestro bucket>"
 ```
@@ -162,7 +162,7 @@ Posteriormente, en el apartado de **Configuration**, establecemos el tiempo de v
 
 Para un diseño riguroso, el valor de **Visibility timeout** deberá contemplar el tiempo de transcoding de los videos por parte de la capa worker, e.i. Máximo tiempo estimado.
 
-**Actualización de Secreto:** En este punto procedemos a almacenar la URL de nuestra cola SQS en el secreto previamente creado: 
+**Actualización de Secreto:** En este punto procedemos a almacenar la URL de nuestra cola SQS en el secreto previamente creado:
 
 ```json
 "sqs_url":"<url de la cola SQS>"
@@ -213,41 +213,41 @@ Procedemos a la [creación de 2](https://console.aws.amazon.com/iam/home#/roles$
 Posteriormente, podemos seleccionar las políticas asociadas a cada rol,  para ello seleccionaremos las siguientes políticas para el primer rol, el cual estará asociado a las instancias web.
 
 * **SecretsManagerReadWrite:**
-    
+
     ```arn:aws:iam::aws:policy/SecretsManagerReadWrite```
 
 * **AmazonSQSFullAccess:**
-    
+
     ```arn:aws:iam::aws:policy/AmazonSQSFullAccess```
 
-* **AmazonS3FullAccess:** 
-    
+* **AmazonS3FullAccess:**
+
     ```arn:aws:iam::aws:policy/AmazonS3FullAccess```
 
 Después de seleccionar las políticas mencionadas, continuamos con la definición del rol y asignamos el nombre correspondiente. Sugerencia de nombre: ```WEB_S3-SQS-SecretManager```.
 
-Este proceso se debe ejecutar nuevamente para la creación del rol para las instancias  worker. En este caso se deben asignar las siguientes políticas durante la creación del rol. 
+Este proceso se debe ejecutar nuevamente para la creación del rol para las instancias  worker. En este caso se deben asignar las siguientes políticas durante la creación del rol.
 
 * **SecretsManagerReadWrite:**
 
     ```arn:aws:iam::aws:policy/SecretsManagerReadWrite```
 
-* **AmazonSQSFullAccess:** 
+* **AmazonSQSFullAccess:**
 
     ```arn:aws:iam::aws:policy/AmazonSQSFullAccess```
 
-* **AmazonS3FullAccess:** 
+* **AmazonS3FullAccess:**
 
     ```arn:aws:iam::aws:policy/AmazonS3FullAccess```
 
-* **AmazonSESFullAccess:** 
-    
+* **AmazonSESFullAccess:**
+
     ```arn:aws:iam::aws:policy/AmazonSESFullAccess```
 
 Sugerencia de nombre: ```WORKER-S3-SQS-SecretManager-SES```.
 
 ## 8. Grupos de Seguridad
-	
+
 En este punto debemos crear los Security Groups y permitir la comunicación entre el ALB y las instancias Web y entre la base de datos y las instancias Web y worker.
 
 ## 9. Launch Configuration Web
@@ -256,7 +256,7 @@ En este paso creamos la [configuración de despliegue](https://console.aws.amazo
 
 ## 10. Autoescalamiento web
 
-Es importante aclarar que algunos de los servicios a implementar se crearán durante el proceso de implementación del servicio de autoescalamiento, para ello nos podemos dirigir a [Autoscaling Group](https://console.aws.amazon.com/ec2autoscaling/home). 
+Es importante aclarar que algunos de los servicios a implementar se crearán durante el proceso de implementación del servicio de autoescalamiento, para ello nos podemos dirigir a [Autoscaling Group](https://console.aws.amazon.com/ec2autoscaling/home).
 
 Desde este instante seleccionamos la configuración de despliegue de instancias web que creamos en el paso anterior y asignamos un nombre a nuestro grupo de autoescalamiento.
 
@@ -270,7 +270,7 @@ En el siguiente paso seleccionamos "_adjuntar un nuevo balanceador de carga_", d
 
 ![videoshare-arch](imgs/autoscaling-advance.png)
 
-Aquí crearemos el **Application Load Balancer**, el cual permitirá realizar balanceo de carga a través de múltiples instancias Web. Para ello vamos a seguir los pasos que se indican en la consola de AWS y nos llevará a la creación de un **listener** y un **target group**. 
+Aquí crearemos el **Application Load Balancer**, el cual permitirá realizar balanceo de carga a través de múltiples instancias Web. Para ello vamos a seguir los pasos que se indican en la consola de AWS y nos llevará a la creación de un **listener** y un **target group**.
 
 De esta forma podremos especificar en el **listener** que el puesto de escucha es el 80 y que el redireccionamiento se hace hacia al puerto 8080. De esta manera las instancias web que incorporamos en el **target group** recibirán el tráfico por el puerto apropiado.
 
@@ -278,7 +278,7 @@ De esta forma podremos especificar en el **listener** que el puesto de escucha e
 
 En este punto podemos asignar el tipo de Health Check, el cual lo haremos a través del Elastic Load Balancer (ELB) implementado, en este caso un **Application Load Balancer**.
 
-Ya podemos definir el tamaño deseado de nuestro grupo (Group Size) de autoescalamiento y el número de instancias máximas y mínimas requeridas para desplegar nuestra capa web. 
+Ya podemos definir el tamaño deseado de nuestro grupo (Group Size) de autoescalamiento y el número de instancias máximas y mínimas requeridas para desplegar nuestra capa web.
 
 ![videoshare-arch](imgs/autoscaling-group-size.png)
 
@@ -299,6 +299,6 @@ En este punto ya es posible realizar la validación del servicio VideoShare, ver
 **Nota:** El **ALB** se puede asociar a un dominio mediante un **Alias Record** con **Route 53**.
 
 
-## Comentarios adicionales: 
+## Comentarios adicionales:
 
 En función de la **VPC** a implementar en este proyecto (default u otra), debemos o no crear un **VPC Endpoint** de tipo **Gateway** para asegurar el acceso a S3 mediante conexión privada de AWS para las instancias que se encuentren al interior de la VPC, de tal manera que el acceso a los objetos no suceda a través de internet mediante un **IGW** (Internet Gateway).
