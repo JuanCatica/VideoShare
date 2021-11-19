@@ -1,6 +1,6 @@
 # VIDEOSHARE
 
-<b>VideoShare</b> es un proyecto que se centra en la construcción de un servicio, sobre el cual sea posible crear concursos de videos los cuales pueden ser compartidos con amigos, conocidos o cualquier persona que desee participar, permitiendo a los participantes subir sus videos y compartirlos con los demás. Para ello <b>VideoShare</b> transforma los videos en formato ```.FLV```, ```.WMV``` y ```.AVI``` a ```.MP4```, cuando cada video esta listo se envía una notificación via email al participante informando que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
+<b>VideoShare</b> es un proyecto que se centra en la construcción de un SaaS, sobre el cual sea posible crear concursos de videos, los cuales a su vez pueden ser compartidos con amigos, conocidos o cualquier persona que desee participar; permitiendo a los participantes subir sus videos y compartirlos con los demás. Para ello <b>VideoShare</b> transforma los videos en formato ```.FLV```, ```.WMV``` y ```.AVI``` a formato ```.MP4```, cuando cada video esta listo se envía una notificación via email al participante informando que el proceso de transformación se ha llevado a cabo exitosamente y podrá ver el video en la página exclusiva de concurso.
 
 * [1. Creación de Secreto](#1-creación-de-secreto)
 * [2. Crear almacenamiento S3](#2-Crear-almacenamiento-S3)
